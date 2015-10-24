@@ -15,21 +15,29 @@ def find_set(cards):
             subsets.append(list(subset))
     print len(subsets)
 
-    print subsets
-    l = [[1, 2, 3], [3, 6, 8], [4, 9], [6, 11]]
+    #finding max disjoint
+    sets = process_sets(subsets)
 
-    for set in combine(l):
-         print set
-    for set in combine(subsets):
-        print set
+    max_disjoint = []
+    for set in combine_recurse(sets):
+        if len(set) > len(max_disjoint):
+            max_disjoint = set
+    print len(max_disjoint), "\n"
 
-def combine(input, list = [], lset = set()):
-    if list:
-        yield list
-    for i, el in enumerate(input):
-        if lset.isdisjoint(el):
-            for out in combine(input[i+1:], list + [el], lset | set(el)):
-                yield out
+    for card in max_disjoint:
+        for i in xrange(3):
+            print card[i]
+        # to separate lines
+        print " "
+
+
+def combine_recurse(sets, curr_list=[], list_sets=set()):
+    if curr_list:
+        yield curr_list
+    for i, s in enumerate(sets):
+        if list_sets.isdisjoint(s):
+            for disjoint in combine_recurse(sets[i+1:], curr_list + [s], list_sets | set(s)):
+                yield disjoint
 
 
 def process_cards(cards):
@@ -38,6 +46,12 @@ def process_cards(cards):
     for i in xrange(1, len(cards)):
         cards[i] = cards[i].split(' ')
     return cards
+
+
+def process_sets(sets):
+    for i in xrange(len(sets)):
+        sets[i] = [' '.join(sets[i][0][0:2]), ' '.join(sets[i][1][0:2]), ' '.join(sets[i][2][0:2])]
+    return sets
 
 
 def is_set(triplet):
@@ -99,6 +113,30 @@ green a\n\
 green @"
 
 input2 = "\
+21\n\
+blue hhh\n\
+yellow @\n\
+green ##\n\
+yellow ###\n\
+blue AA\n\
+green SSS\n\
+blue ###\n\
+yellow s\n\
+yellow ##\n\
+blue H\n\
+green A\n\
+blue $\n\
+green SS\n\
+green ###\n\
+blue ss\n\
+yellow $\n\
+green aaa\n\
+green AA\n\
+yellow sss\n\
+green aa\n\
+green S"
+
+input3 = "\
 28\n\
 blue hhh\n\
 yellow @\n\
@@ -131,7 +169,6 @@ green sss"
 
 
 start_time = time.time()
-find_set(input1)
+find_set(input3)
 print ("seconds: %s" % (time.time()-start_time))
-
 
